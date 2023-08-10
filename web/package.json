@@ -1,7 +1,6 @@
 {
-  "name": "web",
-  "version": "0.0.0",
-  "private": true,
+  "name": "space-explorer-web",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
@@ -12,6 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@tabler/icons-vue": "^2.30.0",
     "pinia": "^2.1.4",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
