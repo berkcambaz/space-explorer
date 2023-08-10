@@ -22,7 +22,6 @@ onMounted(async () => {
   <VSheet class="mx-4 my-4">
     <VImg height="calc(75vh - 64px)" :src="apod?.url" />
     <VSheet :max-width="display.thresholds.value.sm" class="mx-auto">
-      <p class="text-h4 text-center mt-4 mb-2">{{ apod?.title }}</p>
       <h2 class="text-h4 text-center mt-4 mb-2">{{ apod?.title }}</h2>
       <p class="text-body-1 text-center">{{ apod?.explanation }}</p>
     </VSheet>
