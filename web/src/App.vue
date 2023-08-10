@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { RouterView, useRouter } from 'vue-router'
 import { useDisplay } from "vuetify";
 
 const display = useDisplay();
 const router = useRouter();
+
+const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "picture-of-the-day" }))
+const youOnEarthdClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "you-on-earth" }))
+const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "earth-enhanced" }))
+
 </script>
 
 <template>
@@ -22,20 +28,22 @@ const router = useRouter();
           <VBtn color="blue" variant="elevated">Login</VBtn>
 
           <RouterLink to="/picture-of-the-day">
-            <VBtn variant="flat">Picture of the Day</VBtn>
+            <VBtn variant="flat" :class="pictureOfTheDayClass">Picture of the Day</VBtn>
           </RouterLink>
 
           <RouterLink to="/you-on-earth">
-            <VBtn variant="flat">You on Earth</VBtn>
+            <VBtn variant="flat" :class="youOnEarthdClass">You on Earth</VBtn>
           </RouterLink>
 
           <RouterLink to="/earth-enhanced">
-            <VBtn variant="flat">Earth Enhanced</VBtn>
+            <VBtn variant="flat" :class="earthEnhancedClass">Earth Enhanced</VBtn>
           </RouterLink>
         </VSheet>
       </VSheet>
     </VAppBar>
-  </VLayout>
 
-  <RouterView />
+    <VMain class="w-sm">
+      <RouterView />
+    </VMain>
+  </VLayout>
 </template>
