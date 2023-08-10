@@ -10,6 +10,7 @@ import { watchEffect } from 'vue';
 const display = useDisplay();
 
 const apod = ref<IAPOD | undefined>(undefined);
+const favourited = ref(false);
 
 const dialog = ref(false);
 const date = ref<any[] | undefined>(new Date().toString() as any);
@@ -24,7 +25,9 @@ watchEffect(async () => {
 
     const result = await fetch(`https://api.nasa.gov/planetary/apod?date=${isoDate}&api_key=${import.meta.env.VITE_NASA_API_KEY}`);
     const json = await result.json() as IAPOD;
+
     apod.value = json;
+    favourited.value = false;
   } catch (error) {
 
   }
@@ -36,6 +39,13 @@ watchEffect(async () => {
     <VImg height="calc(75vh - 64px)" :src="apod?.url" />
 
     <VSheet class="d-flex justify-center my-2">
+      <VBtn 
+        :icon="favourited ? 'mdi-star' : 'mdi-star-outline'"
+        @click="favourited = !favourited"
+        variant="text"
+        density="comfortable"
+      />
+
       <VBtn prepend-icon="mdi-calendar" variant="text">
         {{ formattedDate }}
 
