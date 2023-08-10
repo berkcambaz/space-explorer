@@ -22,7 +22,7 @@ watchEffect(async () => {
     const isoDate = new Date(formattedDate.value).toISOString().split('T')[0];
     if (!isoDate) return;
 
-    const result = await fetch(`https://api.nasa.gov/planetary/apod?date=${isoDate}&api_key=DEMO_KEY`);
+    const result = await fetch(`https://api.nasa.gov/planetary/apod?date=${isoDate}&api_key=${import.meta.env.VITE_NASA_API_KEY}`);
     const json = await result.json() as IAPOD;
     apod.value = json;
   } catch (error) {
