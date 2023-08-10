@@ -35,10 +35,10 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <VSheet class="mx-4 my-4">
+  <VSheet class="mx-4 my-4 bg-transparent">
     <VImg height="calc(75vh - 64px)" :src="apod?.url" />
 
-    <VSheet class="d-flex justify-center my-2">
+    <VSheet class="d-flex justify-center my-2 bg-transparent">
       <VBtn 
         :icon="favourited ? 'mdi-star' : 'mdi-star-outline'"
         @click="favourited = !favourited"
@@ -57,7 +57,7 @@ watchEffect(async () => {
       </VBtn>
     </VSheet>
 
-    <VSheet :max-width="display.thresholds.value.sm" class="mx-auto">
+    <VSheet :max-width="display.thresholds.value.sm" class="mx-auto bg-transparent">
       <h2 class="text-h4 text-center my-2">{{ apod?.title }}</h2>
       <p class="text-body-1 text-center">{{ apod?.explanation }}</p>
       <p v-if="apod?.copyright" class="text-caption text-center">{{ `© ${apod.copyright}` }}</p>
