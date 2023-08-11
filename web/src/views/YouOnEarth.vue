@@ -3,12 +3,17 @@ import examplePNG from '@/assets/you-on-earth.png'
 import Progress from "@/components/Progress.vue"
 import { util } from '@/lib/util';
 import panzoom, { type PanZoom } from "panzoom";
+import { watch } from 'vue';
 import { onMounted } from 'vue';
+import { computed } from 'vue';
 import { ref } from 'vue';
 import { onUnmounted } from 'vue';
 import { useDisplay } from 'vuetify';
 
 const display = useDisplay();
+
+const loading = ref(true);
+const error = ref(false);
 
 const instance = ref<PanZoom | undefined>(undefined);
 const coords = ref<{ lat: number, lon: number } | undefined>(undefined);
@@ -24,13 +29,35 @@ function stopPanZoom() {
   instance.value?.dispose();
 }
 
+function onLoad() {
+  startPanZoom();
+  loading.value = false;
+}
+
+function onError() {
+  loading.value = false;
+  error.value = true;
+}
+
+watch(loading, () => {
+  console.log(loading.value)
+  if (loading.value) stopPanZoom();
+})
+
+const imageSrc = computed(() => {
+  if (!coords.value) return undefined;
+  if (error.value) return examplePNG;
+
+  const { lon, lat } = coords.value;
+  return `https://api.nasa.gov/planetary/earth/imagery?lon=${lon}&lat=${lat}&api_key=${import.meta.env.VITE_NASA_API_KEY}`
+})
+
 onMounted(async () => {
   const location = await util.getLocation();
-  if (location) return;
+  if (!location) return;
 
   const { longitude: lon, latitude: lat } = location.coords;
   coords.value = { lon, lat };
-  //console.log(await fetch(`https://api.nasa.gov/planetary/earth/imagery?lon=${lon}&lat=${lat}&api_key=DB0XIxGdcZVdQw6MCa1HQjqehnPxE2NyAdkgfZVS`))
 })
 
 onUnmounted(() => {
@@ -42,7 +69,7 @@ onUnmounted(() => {
   <VSheet class="mx-4 my-4 bg-transparent">
 
     <VSheet style="overflow: hidden;">
-      <VImg id="panzoom" height="calc(75vh - 64px)" :src="examplePNG" @load="startPanZoom">
+      <VImg id="panzoom" height="calc(75vh - 64px)" :src="imageSrc" @error="onError" @load="onLoad">
         <template v-slot:placeholder><Progress /></template>
       </VImg>
     </VSheet>
@@ -55,6 +82,8 @@ onUnmounted(() => {
         <div>Latitude: {{ coords.lat }}</div>
       </div>
       <Progress v-else />
+
+      <VBtn class="my-2" @click="loading = !loading; error = !error">{{ !error ? "Cancel" : "Retry" }}</VBtn>
     </VSheet>
 
   </VSheet>
