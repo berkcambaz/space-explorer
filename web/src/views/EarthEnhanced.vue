@@ -3,8 +3,13 @@ import { ref, onMounted } from 'vue';
 import type { IEPIC } from '@/types/epic';
 import { useDisplay } from 'vuetify';
 import Progress from "@/components/Progress.vue"
+import { VDatePicker } from 'vuetify/labs/VDatePicker'
 
 const display = useDisplay();
+
+const dialog = ref(false);
+const dateRange = ref([]);
+
 const epic = ref<IEPIC[]>([]);
 const epicShown = ref<IEPIC[]>([]);
 
@@ -35,11 +40,21 @@ onMounted(async () => {
 
   }
 })
-
 </script>
 
 <template>
   <VSheet class="mx-auto my-4 px-4 bg-transparent" :max-width="display.thresholds.value.md">
+
+    <VSheet class="d-flex justify-center my-2 bg-transparent">
+      <VBtn prepend-icon="mdi-calendar" variant="text">
+        Change Date
+
+        <VDialog width="auto" scrollable v-model="dialog" activator="parent">
+          <VDatePicker v-model="dateRange" :landscape="true"></VDatePicker>
+        </VDialog>
+      </VBtn>
+    </VSheet>
+
     <VImg v-if="epic[0]" class="mb-6" height="calc(75vh - 64px)" :src="epicSrc(epic[0])">
       <template v-slot:placeholder><Progress /></template>
     </VImg>

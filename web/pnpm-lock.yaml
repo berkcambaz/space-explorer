@@ -11,6 +11,9 @@ dependencies:
   '@tabler/icons-vue':
     specifier: ^2.30.0
     version: 2.30.0(vue@3.3.4)
+  panzoom:
+    specifier: ^9.4.3
+    version: 9.4.3
   pinia:
     specifier: ^2.1.4
     version: 2.1.4(typescript@5.1.6)(vue@3.3.4)
@@ -743,6 +746,12 @@ packages:
       uri-js: 4.4.1
     dev: true
 
+  /amator@1.1.0:
+    resolution: {integrity: sha512-V5+aH8pe+Z3u/UG3L3pG3BaFQGXAyXHVQDroRwjPHdh08bcUEchAVsU1MCuJSCaU5o60wTK6KaE6te5memzgYw==}
+    dependencies:
+      bezier-easing: 2.1.0
+    dev: false
+
   /ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
@@ -798,6 +807,10 @@ packages:
   /balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: true
+
+  /bezier-easing@2.1.0:
+    resolution: {integrity: sha512-gbIqZ/eslnUFC1tjEvtz0sgx+xTK20wDnYMIA27VA04R7w6xxXQPZDbibjA9DTWZRA2CXtwHykkVzlCaAJAZig==}
+    dev: false
 
   /big-integer@1.6.51:
     resolution: {integrity: sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==}
@@ -1897,6 +1910,10 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
+  /ngraph.events@1.2.2:
+    resolution: {integrity: sha512-JsUbEOzANskax+WSYiAPETemLWYXmixuPAlmZmhIbIj6FH/WDgEGCGnRwUQBK0GjOnVm8Ui+e5IJ+5VZ4e32eQ==}
+    dev: false
+
   /nice-try@1.0.5:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
     dev: true
@@ -2036,6 +2053,14 @@ packages:
   /p-try@2.2.0:
     resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
     engines: {node: '>=6'}
+
+  /panzoom@9.4.3:
+    resolution: {integrity: sha512-xaxCpElcRbQsUtIdwlrZA90P90+BHip4Vda2BC8MEb4tkI05PmR6cKECdqUCZ85ZvBHjpI9htJrZBxV5Gp/q/w==}
+    dependencies:
+      amator: 1.1.0
+      ngraph.events: 1.2.2
+      wheel: 1.0.0
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -2707,6 +2732,10 @@ packages:
       typescript: 5.1.6
       vite-plugin-vuetify: 1.0.2(vite@4.4.6)(vue@3.3.4)(vuetify@3.3.12)
       vue: 3.3.4
+
+  /wheel@1.0.0:
+    resolution: {integrity: sha512-XiCMHibOiqalCQ+BaNSwRoZ9FDTAvOsXxGHXChBugewDj7HC8VBIER71dEOiRH1fSdLbRCQzngKTSiZ06ZQzeA==}
+    dev: false
 
   /which-boxed-primitive@1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}
