@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import type { IEPIC } from '@/types/epic';
 import { useDisplay } from 'vuetify';
+import Progress from "@/components/Progress.vue"
 
 const display = useDisplay();
 const epic = ref<IEPIC[]>([]);
@@ -39,11 +40,15 @@ onMounted(async () => {
 
 <template>
   <VSheet class="mx-auto my-4 px-4 bg-transparent" :max-width="display.thresholds.value.md">
-    <VImg v-if="epic[0]" class="mb-6" height="calc(75vh - 64px)" :src="epicSrc(epic[0])" />
+    <VImg v-if="epic[0]" class="mb-6" height="calc(75vh - 64px)" :src="epicSrc(epic[0])">
+      <template v-slot:placeholder><Progress /></template>
+    </VImg>
 
     <VRow>
       <VCol v-for="data in epicShown" :key="data.identifier" cols="4">
-        <VImg :src="epicSrc(data)" aspect-ratio="1" cover />
+        <VImg :src="epicSrc(data)" aspect-ratio="1" cover>
+          <template v-slot:placeholder><Progress /></template>
+        </VImg>
       </VCol>
     </VRow>
 

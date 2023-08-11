@@ -6,6 +6,7 @@ import type { IAPOD } from '@/types/apod'
 import { util } from '@/lib/util'
 import { computed } from 'vue';
 import { watchEffect } from 'vue';
+import Progress from "@/components/Progress.vue"
 
 const display = useDisplay();
 
@@ -36,7 +37,9 @@ watchEffect(async () => {
 
 <template>
   <VSheet class="mx-4 my-4 bg-transparent">
-    <VImg height="calc(75vh - 64px)" :src="apod?.url" />
+    <VImg height="calc(75vh - 64px)" :src="apod?.url">
+      <template v-slot:placeholder><Progress /></template>
+    </VImg>
 
     <VSheet class="d-flex justify-center my-2 bg-transparent">
       <VBtn 
