@@ -4,29 +4,61 @@ import type { IEPIC } from '@/types/epic';
 import { useDisplay } from 'vuetify';
 import Progress from "@/components/Progress.vue"
 import { VDatePicker } from 'vuetify/labs/VDatePicker'
+import { watch } from 'vue';
 
 const display = useDisplay();
 
 const dialog = ref(false);
-const dateRange = ref([]);
+const dateRange = ref<string[]>([]);
 
 const epic = ref<IEPIC[]>([]);
 const epicShown = ref<IEPIC[]>([]);
 
 const API_KEY = import.meta.env.VITE_NASA_API_KEY;
 
-function epicSrc(epic: IEPIC) {
-  const date = epic.date.slice(0, 10).replaceAll('-', '/');
-  const image = epic.image;
+function epicSrc(_epic: IEPIC) {
+  const date = _epic.date.slice(0, 10).replaceAll('-', '/');
+  const image = _epic.image;
   return `https://api.nasa.gov/EPIC/archive/enhanced/${date}/jpg/${image}.jpg?api_key=${API_KEY}`
 }
 
-function showMore() {
+async function showMore() {
   const diff = Math.min(epic.value.length - epicShown.value.length, 3);
-  if (diff <= 0) return;
+
+  if (diff <= 0 && dateRange.value.length !== 2) return;
+  if (diff <= 0 && dateRange.value.length === 2) {
+    const lastEPIC = epicShown.value[epicShown.value.length - 1];
+    if (!lastEPIC) return;
+
+    const date = new Date(lastEPIC.date);
+    date.setDate(date.getDate() + 1);
+
+    const json = await fetchByDate(date.toISOString().slice(0, 10));
+    const count = Math.min(json.length, 3, (epic.value.length - 1) % 3);
+
+    epic.value.push(...json);
+    epicShown.value.push(...json.slice(0, count));
+    return;
+  }
 
   const currentLength = epicShown.value.length;
   epicShown.value.push(...epic.value.slice(currentLength, currentLength + diff));
+}
+
+watch(dateRange, async () => {
+  const date = dateRange.value[0] ? new Date(dateRange.value[0]) : new Date();
+  const dateText = date.toISOString().slice(0, 10);
+
+  const json = await fetchByDate(dateText);
+
+  epic.value = json;
+  epicShown.value = json.slice(1, 3 + 1);
+})
+
+async function fetchByDate(date: string) {
+  const result = await fetch(`https://api.nasa.gov/EPIC/api/enhanced/date/${date}?api_key=${API_KEY}`);
+  const json = await result.json() as IEPIC[];
+  return json;
 }
 
 onMounted(async () => {
@@ -51,7 +83,7 @@ onMounted(async () => {
 
         <VDialog width="auto" scrollable v-model="dialog" activator="parent">
           <VSheet>
-            <VDatePicker v-model="dateRange" :landscape="true" />
+            <VDatePicker v-model="dateRange" multiple />
           </VSheet>
         </VDialog>
       </VBtn>
@@ -69,7 +101,7 @@ onMounted(async () => {
       </VCol>
     </VRow>
 
-    <div v-if="epicShown.length !== epic.length" class="d-flex align-center my-4">
+    <div class="d-flex align-center my-4">
       <VBtn class="mx-auto" @click="showMore">Load More</VBtn>
     </div>
   </VSheet>
