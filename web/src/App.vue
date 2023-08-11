@@ -59,7 +59,7 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
       </VSheet>
     </VAppBar>
 
-    <VNavigationDrawer v-model="menu" location="left" temporary>
+    <VNavigationDrawer v-model="menu" location="left" temporary style="z-index: 9999;">
       <VSheet class="d-flex flex-wrap">
 
         <RouterLink to="/picture-of-the-day" class="w-100 ma-1">
