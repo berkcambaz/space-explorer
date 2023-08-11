@@ -53,7 +53,7 @@ watchEffect(async () => {
         {{ formattedDate }}
 
         <VDialog width="auto" scrollable v-model="dialog" activator="parent">
-          <VDatePicker v-model="date" />
+          <VSheet><VDatePicker v-model="date" /></VSheet>
         </VDialog>
       </VBtn>
     </VSheet>

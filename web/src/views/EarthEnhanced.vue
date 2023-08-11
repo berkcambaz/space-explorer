@@ -50,7 +50,9 @@ onMounted(async () => {
         Change Date
 
         <VDialog width="auto" scrollable v-model="dialog" activator="parent">
-          <VDatePicker v-model="dateRange" :landscape="true"></VDatePicker>
+          <VSheet>
+            <VDatePicker v-model="dateRange" :landscape="true" />
+          </VSheet>
         </VDialog>
       </VBtn>
     </VSheet>
