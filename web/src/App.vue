@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { StyleValue } from 'vue';
+import { ref } from 'vue';
 import { RouterView, useRouter } from 'vue-router'
 import { useDisplay } from "vuetify";
 
 const display = useDisplay();
 const router = useRouter();
+
+const menu = ref(false);
 
 const backButtonStyle = computed((): StyleValue => router.currentRoute.value.name === "home" ? { visibility: "hidden" } : {})
 const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "picture-of-the-day" }))
@@ -18,6 +21,7 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
   <div class="background"></div>
 
   <VLayout>
+
     <VAppBar>
       <VSheet class="ma-auto d-flex flex-1-1 flex-row justify-space-between" :max-width="display.thresholds.value.md">
 
@@ -49,15 +53,39 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         </VSheet>
 
         <VSheet v-else>
-          <VBtn icon="mdi-menu" class="ma-1" />
+          <VBtn icon="mdi-menu" class="ma-1" @click="menu = !menu" />
         </VSheet>
 
       </VSheet>
     </VAppBar>
 
+    <VNavigationDrawer v-model="menu" location="left" temporary>
+      <VSheet class="d-flex flex-wrap">
+
+        <RouterLink to="/picture-of-the-day" class="w-100 ma-1">
+          <VBtn variant="flat" class="w-100" :class="pictureOfTheDayClass">Picture of the Day</VBtn>
+        </RouterLink>
+
+        <RouterLink to="/you-on-earth" class="w-100 ma-1">
+          <VBtn variant="flat" class="w-100" :class="youOnEarthClass">You on Earth</VBtn>
+        </RouterLink>
+
+        <RouterLink to="/earth-enhanced" class="w-100 ma-1">
+          <VBtn variant="flat" class="w-100" :class="earthEnhancedClass">Earth Enhanced</VBtn>
+        </RouterLink>
+
+        <VSheet class="w-100 ma-1">
+          <VBtn class="w-100" color="blue" variant="elevated" prepend-icon="mdi-login">Login</VBtn>
+        </VSheet>
+
+      </VSheet>
+
+    </VNavigationDrawer>
+
     <VMain class="w-sm">
       <RouterView />
     </VMain>
+
   </VLayout>
 </template>
 
