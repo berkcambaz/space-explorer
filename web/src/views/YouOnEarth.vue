@@ -22,6 +22,7 @@ function startPanZoom() {
   const elem = document.getElementById("panzoom");
   if (!elem) return;
 
+  if (instance.value) return;
   instance.value = panzoom(elem, { bounds: true });
 }
 
@@ -39,14 +40,25 @@ function onError() {
   error.value = true;
 }
 
+function toggle() {
+  if (loading.value) {
+    loading.value = false;
+    error.value = true;
+  }
+  else {
+    loading.value = true;
+    error.value = false;
+  }
+}
+
 watch(loading, () => {
-  console.log(loading.value)
-  if (loading.value) stopPanZoom();
+  if (loading.value) instance.value?.pause();
+  else instance.value?.resume();
 })
 
 const imageSrc = computed(() => {
-  if (!coords.value) return undefined;
   if (error.value) return examplePNG;
+  if (!coords.value) return undefined;
 
   const { lon, lat } = coords.value;
   return `https://api.nasa.gov/planetary/earth/imagery?lon=${lon}&lat=${lat}&api_key=${import.meta.env.VITE_NASA_API_KEY}`
@@ -68,10 +80,9 @@ onUnmounted(() => {
 <template>
   <VSheet class="mx-4 my-4 bg-transparent">
 
-    <VSheet style="overflow: hidden;">
-      <VImg id="panzoom" height="calc(75vh - 64px)" :src="imageSrc" @error="onError" @load="onLoad">
-        <template v-slot:placeholder><Progress /></template>
-      </VImg>
+    <VSheet style="position: relative; overflow: hidden;">
+      <VImg id="panzoom" height="calc(75vh - 64px)" :src="imageSrc" @error="onError" @load="onLoad" />
+      <VOverlay v-model="loading" persistent contained class="align-center justify-center"><Progress /></VOverlay>
     </VSheet>
 
     <VSheet :max-width="display.thresholds.value.sm" class="mx-auto bg-transparent text-center">
@@ -83,7 +94,7 @@ onUnmounted(() => {
       </div>
       <Progress v-else />
 
-      <VBtn class="my-2" @click="loading = !loading; error = !error">{{ !error ? "Cancel" : "Retry" }}</VBtn>
+      <VBtn class="my-2" @click="toggle">{{ loading ? "Cancel" : "Retry" }}</VBtn>
     </VSheet>
 
   </VSheet>
