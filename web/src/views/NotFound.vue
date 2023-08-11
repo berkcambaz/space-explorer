@@ -6,7 +6,7 @@ const display = useDisplay();
 </script>
 
 <template>
-  <VSheet :max-width="display.thresholds.value.sm" class="mx-auto my-4 bg-transparent">
+  <VSheet :max-width="display.thresholds.value.sm" class="mx-auto my-4 px-4 bg-transparent">
     <VImg class="mx-auto" :src="undrawTaken" maxWidth="300" />
 
     <div class="text-center my-2">
