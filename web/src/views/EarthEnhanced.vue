@@ -89,7 +89,7 @@ onMounted(async () => {
       </VBtn>
     </VSheet>
 
-    <VImg v-if="epic[0]" class="mb-6" height="calc(75vh - 64px)" :src="epicSrc(epic[0])">
+    <VImg class="mb-6" height="calc(75vh - 64px)" :src="epic[0] && epicSrc(epic[0])">
       <template v-slot:placeholder><Progress /></template>
     </VImg>
 
