@@ -49,10 +49,8 @@ watchEffect(async () => {
       <VBtn prepend-icon="mdi-calendar" variant="text">
         {{ formattedDate }}
 
-        <VDialog width="auto" v-model="dialog" activator="parent">
-          <VContainer class="d-flex flex-0-0 justify-center align-center">
-            <VDatePicker v-model="date" />
-          </VContainer>
+        <VDialog width="auto" scrollable v-model="dialog" activator="parent">
+          <VDatePicker v-model="date" />
         </VDialog>
       </VBtn>
     </VSheet>
