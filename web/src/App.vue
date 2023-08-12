@@ -30,8 +30,9 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         <VSheet class="d-flex align-center">
           <VBtn :style="backButtonStyle" class="v-hidden ma-1" icon="mdi-arrow-left" @click="router.go(-1)" />
 
-          <RouterLink to="/home" class="ma-1 text-decoration-none text-white">
-            <h2>Space Explorer</h2>
+          <RouterLink to="/home" class="d-flex ma-1 text-decoration-none text-white">
+            <VImg src="/android-chrome-512x512.png" width="32" />
+            <h2 class="text-h6 mx-2">Space Explorer</h2>
           </RouterLink>
         </VSheet>
 
