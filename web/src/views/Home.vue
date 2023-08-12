@@ -10,7 +10,9 @@ const display = useDisplay();
 <template>
   <VSheet class="mx-4 my-4 bg-transparent">
 
-    <h1 class="text-h4 text-center my-16" style="text-shadow: 4px 2px 8px #fff;">
+    <VImg src="/android-chrome-512x512.png" class="mx-auto my-8" maxWidth="200" />
+
+    <h1 class="text-h4 text-center" style="text-shadow: 4px 2px 8px #fff;">
       SPACE EXPLORER
     </h1>
 
