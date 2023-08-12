@@ -4,9 +4,11 @@ import type { StyleValue } from 'vue';
 import { ref } from 'vue';
 import { RouterView, useRouter } from 'vue-router'
 import { useDisplay } from "vuetify";
+import { useAppStore } from './stores/app';
 
 const display = useDisplay();
 const router = useRouter();
+const appStore = useAppStore();
 
 const menu = ref(false);
 
@@ -34,7 +36,10 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         </VSheet>
 
         <VSheet v-if="display.smAndUp.value" class="d-flex align-center">
-          <VBtn class="ma-1" color="blue" variant="elevated" prepend-icon="mdi-login">Login</VBtn>
+          <VBtn class="ma-1" color="blue" variant="elevated"
+            :prepend-icon="!appStore.authorized ? 'mdi-login' : 'mdi-account'">
+            {{ !appStore.authorized ? "Login" : "Account" }}
+          </VBtn>
 
           <RouterLink to="/picture-of-the-day" class="ma-1">
             <VBtn v-if="display.mdAndUp.value" variant="flat" :class="pictureOfTheDayClass">Picture of the Day</VBtn>
@@ -75,7 +80,9 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         </RouterLink>
 
         <VSheet class="w-100 ma-1">
-          <VBtn class="w-100" color="blue" variant="elevated" prepend-icon="mdi-login">Login</VBtn>
+          <VBtn class="w-100" color="blue" variant="elevated"
+            :prepend-icon="!appStore.authorized ? 'mdi-login' : 'mdi-account'">
+            {{ !appStore.authorized ? "Login" : "Account" }}</VBtn>
         </VSheet>
 
       </VSheet>
