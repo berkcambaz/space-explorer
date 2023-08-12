@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import undrawAstranaut from '@/assets/undraw_astronaut.svg'
 import undrawStars from '@/assets/undraw_stars.svg'
+import undrawSpace from '@/assets/undraw_space.svg'
+import { useDisplay } from 'vuetify';
+
+const display = useDisplay();
 </script>
 
 <template>
@@ -10,7 +14,9 @@ import undrawStars from '@/assets/undraw_stars.svg'
       SPACE EXPLORER
     </h1>
 
-    <VSheet class="d-flex justify-center my-8 bg-transparent">
+    <VSheet class="d-flex flex-wrap justify-center my-8 bg-transparent">
+      <VImg :src="undrawAstranaut" :width="display.smAndUp.value ? 300 : '50vw'" maxWidth="300" />
+
       <VSheet class="ma-8 bg-transparent" maxWidth="300">
         <p class="text-body-1 text-center">
           Welcome to Space Explorer, your gateway to the captivating realm of space photography, captured by the lens of
@@ -18,12 +24,11 @@ import undrawStars from '@/assets/undraw_stars.svg'
           compilation of celestial snapshots.
         </p>
       </VSheet>
-      <VImg :src="undrawAstranaut" maxWidth="300" />
     </VSheet>
 
-    <VSheet class="d-flex justify-center my-8 bg-transparent">
-      <VImg :src="undrawStars" maxWidth="300" />
+    <VImg :src="undrawSpace" class="mx-auto my-8" maxWidth="300" />
 
+    <VContainer class="d-flex flex-wrap justify-center my-8 bg-transparent">
       <VSheet class="ma-8 bg-transparent" maxWidth="300">
         <p class="text-body-1 text-center">
           Marvel at the dazzling dance of distant stars, the intricate tapestry of nebulae, and the intriguing landscapes
@@ -32,8 +37,9 @@ import undrawStars from '@/assets/undraw_stars.svg'
           universe, all in one place.
         </p>
       </VSheet>
-    </VSheet>
 
+      <VImg :src="undrawStars" :width="display.smAndUp.value ? 300 : '50vw'" maxWidth="300" />
+    </VContainer>
 
     <VSheet class="d-flex justify-center my-8 bg-transparent">
       <RouterLink to="/picture-of-the-day">
