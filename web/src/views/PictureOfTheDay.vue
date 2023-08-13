@@ -18,11 +18,12 @@ const apod = ref<IAPOD | undefined>(undefined);
 const dialog = ref(false);
 const date = ref<string>(new Date().toString());
 const formattedDate = computed(() => util.formatDate(new Date(date.value)));
-const favourited = computed(() => appStore.isImageFavourited(util.dateToISO(new Date(date.value))));
+const favourited = computed(() => apod.value?.url && appStore.isImageFavourited(apod.value?.url));
 
 async function favourite() {
-  const isoDate = util.dateToISO(new Date(date.value));
-  await appStore.favouriteImage(isoDate, !favourited.value);
+  const imageUrl = apod.value?.url;
+  if (!imageUrl) return;
+  await appStore.favouriteImage(imageUrl, !favourited.value);
 }
 
 watchEffect(async () => {
