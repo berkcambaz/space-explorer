@@ -22,7 +22,7 @@ function epicSrc(_epic: IEPIC) {
   return api.earthEnhancedSrc(date, image);
 }
 
-async function showMore() {
+async function loadMore() {
   const diff = Math.min(epic.value.length - epicShown.value.length, 3);
 
   if (diff <= 0 && dateRange.value.length !== 2) return;
@@ -95,7 +95,7 @@ onMounted(async () => {
     </VRow>
 
     <div class="d-flex align-center my-4">
-      <VBtn class="mx-auto" @click="showMore">Load More</VBtn>
+      <VBtn class="mx-auto" @click="loadMore">Load More</VBtn>
     </div>
   </VSheet>
 </template>
