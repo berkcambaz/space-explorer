@@ -9,6 +9,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Progress from "@/components/Progress.vue"
 import { useDisplay } from 'vuetify';
+import EditProfileDialog from '@/components/EditProfileDialog.vue';
 
 const display = useDisplay();
 const router = useRouter();
@@ -20,12 +21,25 @@ const favourites = ref<IFavourite[]>([]);
 const favouritesShown = ref<IFavourite[]>([]);
 const loading = ref(true);
 
-const profileName = computed(() => user.value?.name || "Space Explorer")
-const profileBio = computed(() => user.value?.bio || "Bio of the Space Explorer")
+const profileName = computed(() => {
+  const name = appStore.isCurrentUser(user.value?.id) ? appStore.user?.name : user.value?.name;
+  return name || "Space Explorer";
+})
+const profileBio = computed(() => {
+  const bio = appStore.isCurrentUser(user.value?.id) ? appStore.user?.bio : user.value?.bio;
+  return bio || "Bio of the Space Explorer";
+})
 const profileDate = computed(
   () => user.value ? util.formatDate(new Date(user.value.created_at)) : "Their journey started at..."
 )
-const profileImageSrc = computed(() => user.value?.profile_image || "/android-chrome-512x512.png")
+const profileImageSrc = computed(() => {
+  const profileImage = appStore.isCurrentUser(user.value?.id) ? appStore.user?.profile_image : user.value?.profile_image;
+  return profileImage || "/android-chrome-512x512.png";
+})
+
+function showEditProfileDialog() {
+  appStore.showEditProfileDialog = !appStore.showEditProfileDialog;
+}
 
 function loadMore() {
   const diff = Math.min(favourites.value.length - favouritesShown.value.length, 3);
@@ -58,7 +72,7 @@ onMounted(async () => {
       <VContainer class="d-flex justify-space-between">
         <VAvatar :image="profileImageSrc" size="128" />
 
-        <VBtn icon="mdi-pencil-outline" />
+        <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-pencil-outline" @click="showEditProfileDialog" />
       </VContainer>
 
       <VContainer>
@@ -87,4 +101,6 @@ onMounted(async () => {
       <VBtn class="mx-auto" @click="loadMore">Load More</VBtn>
     </div>
   </VSheet>
+
+  <EditProfileDialog />
 </template>

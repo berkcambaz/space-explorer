@@ -8,6 +8,7 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     // Dialogs
     showLoginDialog: false,
+    showEditProfileDialog: false,
 
     // Session related
     session: null as Session | null,
@@ -17,14 +18,15 @@ export const useAppStore = defineStore('app', {
     favourites: [] as IFavourite[],
   }),
   getters: {
+    isCurrentUser: (state) => {
+      return (userId: string | undefined) => state.user && state.user.id === userId;
+    },
     isImageFavourited: (state) => {
       return (imageUrl: string) => state.favourites.filter(f => f.image_url === imageUrl).length > 0;
-    }
+    },
   },
   actions: {
     async getUserAllFavouriteImages(userId: string): Promise<IFavourite[]> {
-      if (!this.session) return [];
-
       const { data, error } = await supabase
         .from('favourite')
         .select('*')
