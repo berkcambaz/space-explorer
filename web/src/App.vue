@@ -5,18 +5,26 @@ import { ref } from 'vue';
 import { RouterView, useRouter } from 'vue-router'
 import { useDisplay } from "vuetify";
 import { useAppStore } from './stores/app';
+import LoginDialog from '@/components/LoginDialog.vue';
 
 const display = useDisplay();
 const router = useRouter();
 const appStore = useAppStore();
 
-const menu = ref(false);
+const appMenu = ref(false);
 
 const backButtonStyle = computed((): StyleValue => router.currentRoute.value.name === "home" ? { visibility: "hidden" } : {})
 const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "picture-of-the-day" }))
 const youOnEarthClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "you-on-earth" }))
 const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "earth-enhanced" }))
 
+function showLogin() {
+  appStore.showLoginDialog = !appStore.showLoginDialog;
+}
+
+function gotoAccount() {
+  router.push("/profile/me");
+}
 </script>
 
 <template>
@@ -37,9 +45,13 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         </VSheet>
 
         <VSheet v-if="display.smAndUp.value" class="d-flex align-center">
-          <VBtn class="ma-1" color="blue" variant="elevated"
-            :prepend-icon="!appStore.authorized ? 'mdi-login' : 'mdi-account'">
-            {{ !appStore.authorized ? "Login" : "Account" }}
+          <VBtn v-if="!appStore.authorized" @click="showLogin" class="ma-1" color="blue" variant="elevated"
+            prepend-icon="mdi-login">
+            Login
+          </VBtn>
+          <VBtn v-if="appStore.authorized" @click="gotoAccount" class="ma-1" color="blue" variant="elevated"
+            prepend-icon="mdi-account">
+            Account
           </VBtn>
 
           <RouterLink to="/picture-of-the-day" class="ma-1">
@@ -59,13 +71,13 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         </VSheet>
 
         <VSheet v-else>
-          <VBtn icon="mdi-menu" class="ma-1" @click="menu = !menu" />
+          <VBtn icon="mdi-menu" class="ma-1" @click="appMenu = !appMenu" />
         </VSheet>
 
       </VSheet>
     </VAppBar>
 
-    <VNavigationDrawer v-model="menu" location="left" temporary style="z-index: 9999;">
+    <VNavigationDrawer v-model="appMenu" location="left" temporary style="z-index: 9999;">
       <VSheet class="d-flex flex-wrap">
 
         <RouterLink to="/picture-of-the-day" class="w-100 ma-1">
@@ -81,14 +93,21 @@ const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.curre
         </RouterLink>
 
         <VSheet class="w-100 ma-1">
-          <VBtn class="w-100" color="blue" variant="elevated"
-            :prepend-icon="!appStore.authorized ? 'mdi-login' : 'mdi-account'">
-            {{ !appStore.authorized ? "Login" : "Account" }}</VBtn>
+          <VBtn v-if="!appStore.authorized" @click="showLogin" class="w-100" color="blue" variant="elevated"
+            prepend-icon="mdi-login">
+            Login
+          </VBtn>
+          <VBtn v-if="appStore.authorized" @click="gotoAccount" class="w-100" color="blue" variant="elevated"
+            prepend-icon="mdi-account">
+            Account
+          </VBtn>
         </VSheet>
 
       </VSheet>
 
     </VNavigationDrawer>
+
+    <LoginDialog />
 
     <VMain class="w-sm">
       <RouterView />
