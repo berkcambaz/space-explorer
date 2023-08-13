@@ -3,7 +3,6 @@ import type { Session } from "@supabase/supabase-js";
 import type { IUser } from '@/types/user';
 import type { IFavourite } from '@/types/favourite';
 import { supabase } from '@/lib/supabase';
-import { th } from 'vuetify/locale';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
@@ -19,7 +18,7 @@ export const useAppStore = defineStore('app', {
   }),
   getters: {
     isImageFavourited: (state) => {
-      return (isoDate: string) => state.favourites.filter(f => f.image_date === isoDate).length > 0;
+      return (imageUrl: string) => state.favourites.filter(f => f.image_url === imageUrl).length > 0;
     }
   },
   actions: {
@@ -35,13 +34,13 @@ export const useAppStore = defineStore('app', {
       return [];
     },
 
-    async favouriteImage(isoDate: string, targetState: boolean) {
+    async favouriteImage(imageUrl: string, targetState: boolean) {
       if (!this.session) return;
 
       if (targetState) {
         const { data, error } = await supabase
           .from('favourite')
-          .insert({ image_date: isoDate, user_id: this.session.user.id })
+          .insert({ image_url: imageUrl, user_id: this.session.user.id })
           .select()
 
         if (data && !error) this.favourites.push(...data);
@@ -51,9 +50,9 @@ export const useAppStore = defineStore('app', {
           .from('favourite')
           .delete()
           .eq('user_id', this.session.user.id)
-          .eq('image_date', isoDate)
+          .eq('image_url', imageUrl)
 
-        if (!error) this.favourites = this.favourites.filter(f => f.image_date !== isoDate)
+        if (!error) this.favourites = this.favourites.filter(f => f.image_url !== imageUrl)
       }
     },
 
@@ -77,5 +76,22 @@ export const useAppStore = defineStore('app', {
       if (data && !error) return data[0];
       return undefined;
     },
+
+    async updateUser(name?: string, bio?: string, profile_image?: string) {
+      if (!this.user) return;
+      if (!this.session) return;
+
+      const { data, error } = await supabase
+        .from('user')
+        .update({ name, bio, profile_image })
+        .eq('id', this.session.user.id)
+        .select()
+
+      if (data && !error) {
+        this.user.name = name || this.user.name;
+        this.user.bio = bio || this.user.bio;
+        this.user.profile_image = profile_image || this.user.profile_image;
+      }
+    }
   }
 })

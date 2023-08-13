@@ -1,6 +1,6 @@
 export interface IFavourite {
   id: string;
   created_at: string;
-  image_date: string;
+  image_url: string;
   user_id: string;
 }
