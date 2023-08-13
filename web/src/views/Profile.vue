@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router';
 import Progress from "@/components/Progress.vue"
 import { useDisplay } from 'vuetify';
 import EditProfileDialog from '@/components/EditProfileDialog.vue';
+import { supabase } from '@/lib/supabase';
 
 const display = useDisplay();
 const router = useRouter();
@@ -37,6 +38,12 @@ const profileImageSrc = computed(() => {
   return profileImage || "/android-chrome-512x512.png";
 })
 
+async function logout() {
+  await supabase.auth.signOut();
+  appStore.$reset();
+  router.push("/home");
+}
+
 function showEditProfileDialog() {
   appStore.showEditProfileDialog = !appStore.showEditProfileDialog;
 }
@@ -47,6 +54,10 @@ function loadMore() {
 
   const currentLength = favouritesShown.value.length;
   favouritesShown.value.push(...favourites.value.slice(currentLength, currentLength + diff));
+}
+
+function setProfileImage(imageUrl: string) {
+  appStore.updateUser(undefined, undefined, imageUrl);
 }
 
 onMounted(async () => {
@@ -63,7 +74,6 @@ onMounted(async () => {
   favouritesShown.value = _favourites.slice(0, 3);
   loading.value = false;
 })
-
 </script>
 
 <template>
@@ -72,7 +82,10 @@ onMounted(async () => {
       <VContainer class="d-flex justify-space-between">
         <VAvatar :image="profileImageSrc" size="128" />
 
-        <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-pencil-outline" @click="showEditProfileDialog" />
+        <div>
+          <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-logout" @click="logout" class="mx-2"/>
+          <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-pencil-outline" @click="showEditProfileDialog" />
+        </div>
       </VContainer>
 
       <VContainer>
@@ -90,8 +103,8 @@ onMounted(async () => {
 
   <VSheet class="mx-auto my-4 px-4 bg-transparent" :max-width="display.thresholds.value.md">
     <VRow>
-      <VCol v-for="data in favouritesShown" :key="data.id" cols="4">
-        <VImg :src="data.image_url" aspect-ratio="1" cover>
+      <VCol v-for="data in favouritesShown" :key="data.id" cols="4" style="cursor: pointer;">
+        <VImg @click="setProfileImage(data.image_url)" :src="data.image_url" aspect-ratio="1" cover>
           <template v-slot:placeholder><Progress /></template>
         </VImg>
       </VCol>
