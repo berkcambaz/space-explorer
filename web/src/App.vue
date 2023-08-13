@@ -25,7 +25,9 @@ function showLogin() {
 }
 
 function gotoAccount() {
-  router.push("/profile/me");
+  const id = appStore.session?.user.id;
+  if (!id) return;
+  router.push(`/profile/${id}`);
 }
 
 onMounted(() => {
