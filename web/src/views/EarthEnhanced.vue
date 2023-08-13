@@ -5,6 +5,7 @@ import { useDisplay } from 'vuetify';
 import Progress from "@/components/Progress.vue"
 import { VDatePicker } from 'vuetify/labs/VDatePicker'
 import { watch } from 'vue';
+import { util } from '@/lib/util';
 
 const display = useDisplay();
 
@@ -33,7 +34,7 @@ async function showMore() {
     const date = new Date(lastEPIC.date);
     date.setDate(date.getDate() + 1);
 
-    const json = await fetchByDate(date.toISOString().slice(0, 10));
+    const json = await fetchByDate(util.dateToISO(date));
     const count = Math.min(json.length, 3, (epic.value.length - 1) % 3);
 
     epic.value.push(...json);
@@ -47,7 +48,7 @@ async function showMore() {
 
 watch(dateRange, async () => {
   const date = dateRange.value[0] ? new Date(dateRange.value[0]) : new Date();
-  const dateText = date.toISOString().slice(0, 10);
+  const dateText = util.dateToISO(date);
 
   const json = await fetchByDate(dateText);
 

@@ -15,13 +15,11 @@ const favourited = ref(false);
 
 const dialog = ref(false);
 const date = ref<any[] | undefined>(new Date().toString() as any);
-const formattedDate = computed(
-  () => util.formatDate(new Date(date.value as any).getTime())
-);
+const formattedDate = computed(() => util.formatDate(new Date(date.value as any)));
 
 watchEffect(async () => {
   try {
-    const isoDate = new Date(formattedDate.value).toISOString().split('T')[0];
+    const isoDate = util.dateToISO(new Date(formattedDate.value));
     if (!isoDate) return;
 
     const result = await fetch(`https://api.nasa.gov/planetary/apod?date=${isoDate}&api_key=${import.meta.env.VITE_NASA_API_KEY}`);
@@ -42,18 +40,16 @@ watchEffect(async () => {
     </VImg>
 
     <VSheet class="d-flex justify-center my-2 bg-transparent">
-      <VBtn 
-        :icon="favourited ? 'mdi-star' : 'mdi-star-outline'"
-        @click="favourited = !favourited"
-        variant="text"
-        density="comfortable"
-      />
+      <VBtn :icon="favourited ? 'mdi-star' : 'mdi-star-outline'" @click="favourited = !favourited" variant="text"
+        density="comfortable" />
 
       <VBtn prepend-icon="mdi-calendar" variant="text">
         {{ formattedDate }}
 
         <VDialog width="auto" scrollable v-model="dialog" activator="parent">
-          <VSheet><VDatePicker v-model="date" /></VSheet>
+          <VSheet>
+            <VDatePicker v-model="date" />
+          </VSheet>
         </VDialog>
       </VBtn>
     </VSheet>
