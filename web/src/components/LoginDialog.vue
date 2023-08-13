@@ -2,11 +2,13 @@
 import { ref } from 'vue';
 import { z } from "zod";
 import { useAppStore } from '../stores/app';
+import { supabase } from '@/lib/supabase';
 
 const appStore = useAppStore();
 
-const showMessage = ref(false);
 const email = ref("");
+const loading = ref(false);
+const message = ref("");
 
 function emailRule() {
   const rule = z.string().trim().email().max(320);
@@ -15,8 +17,16 @@ function emailRule() {
   return "Invalid e-mail.";
 }
 
-function login() {
-  showMessage.value = true;
+async function login() {
+  try {
+    loading.value = true;
+    await supabase.auth.signInWithOtp({ email: email.value });
+    message.value = "Please check your email inbox.";
+  } catch (error) {
+    message.value = "An error happened while logging in.";
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
@@ -31,9 +41,9 @@ function login() {
       <VTextField :rules="[emailRule]" v-model="email" prepend-inner-icon="mdi-at" label="Email Address"
         placeholder="johndoe@mail.com" type="email" />
 
-      <VBtn @click="login" class="w-100 mt-4" variant="tonal">Login via Email</VBtn>
+      <VBtn @click="login" :loading="loading" class="w-100 mt-4" variant="tonal">Login via Email</VBtn>
 
-      <p v-show="showMessage" class="text-center text-body-1 mt-4">Please check your email inbox.</p>
+      <p v-show="message" class="text-center text-body-1 mt-4">{{ message }}</p>
     </VContainer>
   </VDialog>
 </template>

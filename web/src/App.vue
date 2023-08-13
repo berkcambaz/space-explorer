@@ -6,6 +6,8 @@ import { RouterView, useRouter } from 'vue-router'
 import { useDisplay } from "vuetify";
 import { useAppStore } from './stores/app';
 import LoginDialog from '@/components/LoginDialog.vue';
+import { onMounted } from 'vue';
+import { supabase } from './lib/supabase';
 
 const display = useDisplay();
 const router = useRouter();
@@ -25,6 +27,18 @@ function showLogin() {
 function gotoAccount() {
   router.push("/profile/me");
 }
+
+onMounted(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    appStore.session = data.session
+    appStore.authorized = !!appStore.session?.user;
+  })
+
+  supabase.auth.onAuthStateChange((_, _session) => {
+    appStore.session = _session
+    appStore.authorized = !!appStore.session?.user;
+  })
+})
 </script>
 
 <template>
