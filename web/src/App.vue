@@ -31,11 +31,14 @@ function gotoAccount() {
 }
 
 onMounted(() => {
-  supabase.auth.getSession().then(({ data }) => {
+  supabase.auth.getSession().then(async ({ data }) => {
     appStore.session = data.session;
 
     if (!appStore.session) return;
-    appStore.getUserAllFavouriteImages(appStore.session.user.id);
+    appStore.createUser();
+
+    const favourites = await appStore.getUserAllFavouriteImages(appStore.session.user.id);
+    appStore.favourites.push(...favourites);
   })
 
   supabase.auth.onAuthStateChange((_e, _session) => {
