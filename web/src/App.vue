@@ -32,13 +32,14 @@ function gotoAccount() {
 
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
-    appStore.session = data.session
-    appStore.authorized = !!appStore.session?.user;
+    appStore.session = data.session;
+
+    if (!appStore.session) return;
+    appStore.getUserAllFavouriteImages(appStore.session.user.id);
   })
 
-  supabase.auth.onAuthStateChange((_, _session) => {
-    appStore.session = _session
-    appStore.authorized = !!appStore.session?.user;
+  supabase.auth.onAuthStateChange((_e, _session) => {
+    appStore.session = _session;
   })
 })
 </script>
@@ -61,11 +62,11 @@ onMounted(() => {
         </VSheet>
 
         <VSheet v-if="display.smAndUp.value" class="d-flex align-center">
-          <VBtn v-if="!appStore.authorized" @click="showLogin" class="ma-1" color="blue" variant="elevated"
+          <VBtn v-if="!appStore.session" @click="showLogin" class="ma-1" color="blue" variant="elevated"
             prepend-icon="mdi-login">
             Login
           </VBtn>
-          <VBtn v-if="appStore.authorized" @click="gotoAccount" class="ma-1" color="blue" variant="elevated"
+          <VBtn v-if="appStore.session" @click="gotoAccount" class="ma-1" color="blue" variant="elevated"
             prepend-icon="mdi-account">
             Account
           </VBtn>
@@ -109,11 +110,11 @@ onMounted(() => {
         </RouterLink>
 
         <VSheet class="w-100 ma-1">
-          <VBtn v-if="!appStore.authorized" @click="showLogin" class="w-100" color="blue" variant="elevated"
+          <VBtn v-if="!appStore.session" @click="showLogin" class="w-100" color="blue" variant="elevated"
             prepend-icon="mdi-login">
             Login
           </VBtn>
-          <VBtn v-if="appStore.authorized" @click="gotoAccount" class="w-100" color="blue" variant="elevated"
+          <VBtn v-if="appStore.session" @click="gotoAccount" class="w-100" color="blue" variant="elevated"
             prepend-icon="mdi-account">
             Account
           </VBtn>

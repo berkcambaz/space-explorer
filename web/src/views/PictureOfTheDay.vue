@@ -8,25 +8,31 @@ import { computed } from 'vue';
 import { watchEffect } from 'vue';
 import Progress from "@/components/Progress.vue"
 import { api } from '@/lib/api';
+import { useAppStore } from '@/stores/app';
 
 const display = useDisplay();
+const appStore = useAppStore();
 
 const apod = ref<IAPOD | undefined>(undefined);
-const favourited = ref(false);
 
 const dialog = ref(false);
-const date = ref<any[] | undefined>(new Date().toString() as any);
-const formattedDate = computed(() => util.formatDate(new Date(date.value as any)));
+const date = ref<string>(new Date().toString());
+const formattedDate = computed(() => util.formatDate(new Date(date.value)));
+const favourited = computed(() => appStore.isImageFavourited(util.dateToISO(new Date(date.value))));
+
+async function favourite() {
+  const isoDate = util.dateToISO(new Date(date.value));
+  await appStore.favouriteImage(isoDate, !favourited.value);
+}
 
 watchEffect(async () => {
   try {
-    const isoDate = util.dateToISO(new Date(formattedDate.value));
+    const isoDate = util.dateToISO(new Date(date.value));
     if (!isoDate) return;
 
     const result = await api.pictureOfTheDay(isoDate);
 
     apod.value = result;
-    favourited.value = false;
   } catch (error) {
 
   }
@@ -40,7 +46,7 @@ watchEffect(async () => {
     </VImg>
 
     <VSheet class="d-flex justify-center my-2 bg-transparent">
-      <VBtn :icon="favourited ? 'mdi-star' : 'mdi-star-outline'" @click="favourited = !favourited" variant="text"
+      <VBtn :icon="favourited ? 'mdi-star' : 'mdi-star-outline'" @click="favourite" variant="text"
         density="comfortable" />
 
       <VBtn prepend-icon="mdi-calendar" variant="text">
@@ -48,7 +54,7 @@ watchEffect(async () => {
 
         <VDialog width="auto" scrollable v-model="dialog" activator="parent">
           <VSheet>
-            <VDatePicker v-model="date" />
+            <VDatePicker v-model="(date as any)" />
           </VSheet>
         </VDialog>
       </VBtn>
