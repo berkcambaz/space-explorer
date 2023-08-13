@@ -7,6 +7,7 @@ import { util } from '@/lib/util'
 import { computed } from 'vue';
 import { watchEffect } from 'vue';
 import Progress from "@/components/Progress.vue"
+import { api } from '@/lib/api';
 
 const display = useDisplay();
 
@@ -22,10 +23,9 @@ watchEffect(async () => {
     const isoDate = util.dateToISO(new Date(formattedDate.value));
     if (!isoDate) return;
 
-    const result = await fetch(`https://api.nasa.gov/planetary/apod?date=${isoDate}&api_key=${import.meta.env.VITE_NASA_API_KEY}`);
-    const json = await result.json() as IAPOD;
+    const result = await api.pictureOfTheDay(isoDate);
 
-    apod.value = json;
+    apod.value = result;
     favourited.value = false;
   } catch (error) {
 

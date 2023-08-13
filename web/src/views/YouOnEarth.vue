@@ -9,6 +9,7 @@ import { computed } from 'vue';
 import { ref } from 'vue';
 import { onUnmounted } from 'vue';
 import { useDisplay } from 'vuetify';
+import { api } from '@/lib/api';
 
 const display = useDisplay();
 
@@ -61,7 +62,7 @@ const imageSrc = computed(() => {
   if (!coords.value) return undefined;
 
   const { lon, lat } = coords.value;
-  return `https://api.nasa.gov/planetary/earth/imagery?lon=${lon}&lat=${lat}&api_key=${import.meta.env.VITE_NASA_API_KEY}`
+  return api.youOnEarthSrc(lon, lat);
 })
 
 onMounted(async () => {

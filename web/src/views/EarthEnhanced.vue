@@ -6,6 +6,7 @@ import Progress from "@/components/Progress.vue"
 import { VDatePicker } from 'vuetify/labs/VDatePicker'
 import { watch } from 'vue';
 import { util } from '@/lib/util';
+import { api } from '@/lib/api';
 
 const display = useDisplay();
 
@@ -15,12 +16,10 @@ const dateRange = ref<string[]>([]);
 const epic = ref<IEPIC[]>([]);
 const epicShown = ref<IEPIC[]>([]);
 
-const API_KEY = import.meta.env.VITE_NASA_API_KEY;
-
 function epicSrc(_epic: IEPIC) {
   const date = _epic.date.slice(0, 10).replaceAll('-', '/');
   const image = _epic.image;
-  return `https://api.nasa.gov/EPIC/archive/enhanced/${date}/jpg/${image}.jpg?api_key=${API_KEY}`
+  return api.earthEnhancedSrc(date, image);
 }
 
 async function showMore() {
@@ -34,11 +33,11 @@ async function showMore() {
     const date = new Date(lastEPIC.date);
     date.setDate(date.getDate() + 1);
 
-    const json = await fetchByDate(util.dateToISO(date));
-    const count = Math.min(json.length, 3, (epic.value.length - 1) % 3);
+    const result = await api.earthEnhanced(util.dateToISO(date));
+    const count = Math.min(result.length, 3, (epic.value.length - 1) % 3);
 
-    epic.value.push(...json);
-    epicShown.value.push(...json.slice(0, count));
+    epic.value.push(...result);
+    epicShown.value.push(...result.slice(0, count));
     return;
   }
 
@@ -50,25 +49,18 @@ watch(dateRange, async () => {
   const date = dateRange.value[0] ? new Date(dateRange.value[0]) : new Date();
   const dateText = util.dateToISO(date);
 
-  const json = await fetchByDate(dateText);
+  const result = await api.earthEnhanced(dateText);
 
-  epic.value = json;
-  epicShown.value = json.slice(1, 3 + 1);
+  epic.value = result;
+  epicShown.value = result.slice(1, 3 + 1);
 })
-
-async function fetchByDate(date: string) {
-  const result = await fetch(`https://api.nasa.gov/EPIC/api/enhanced/date/${date}?api_key=${API_KEY}`);
-  const json = await result.json() as IEPIC[];
-  return json;
-}
 
 onMounted(async () => {
   try {
-    const result = await fetch(`https://api.nasa.gov/EPIC/api/enhanced?api_key=${API_KEY}`);
-    const json = await result.json() as IEPIC[];
+    const result = await api.earthEnhanced();
 
-    epic.value = json;
-    epicShown.value = json.slice(1, 3 + 1);
+    epic.value = result;
+    epicShown.value = result.slice(1, 3 + 1);
   } catch (error) {
 
   }
