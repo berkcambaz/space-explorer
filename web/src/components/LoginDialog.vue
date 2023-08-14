@@ -38,8 +38,8 @@ async function login() {
         <h1 class="text-h4">Space Explorer</h1>
       </div>
 
-      <VTextField :rules="[emailRule]" v-model="email" prepend-inner-icon="mdi-at" label="Email Address"
-        placeholder="johndoe@mail.com" type="email" />
+      <VTextField @keyup.enter="login" :rules="[emailRule]" v-model="email" prepend-inner-icon="mdi-at"
+        label="Email Address" placeholder="johndoe@mail.com" type="email" />
 
       <VBtn @click="login" :loading="loading" class="w-100 mt-4" variant="tonal">Login via Email</VBtn>
 
