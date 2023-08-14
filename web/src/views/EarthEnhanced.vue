@@ -88,9 +88,11 @@ onMounted(async () => {
 
     <VRow>
       <VCol v-for="data in epicShown" :key="data.identifier" cols="4">
-        <VImg :src="epicSrc(data)" aspect-ratio="1" cover>
-          <template v-slot:placeholder><Progress /></template>
-        </VImg>
+        <VCard>
+          <VImg :src="epicSrc(data)" aspect-ratio="1" cover>
+            <template v-slot:placeholder><Progress /></template>
+          </VImg>
+        </VCard>
       </VCol>
     </VRow>
 
