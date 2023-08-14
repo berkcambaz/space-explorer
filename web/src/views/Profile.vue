@@ -69,7 +69,9 @@ onMounted(async () => {
   ]);
 
   user.value = _user;
-  favourites.value = _favourites;
+  favourites.value = _favourites.sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
   favouritesShown.value = _favourites.slice(0, 3);
   loading.value = false;
@@ -83,7 +85,7 @@ onMounted(async () => {
         <VAvatar :image="profileImageSrc" size="128" />
 
         <div>
-          <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-logout" @click="logout" class="mx-2"/>
+          <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-logout" @click="logout" class="mx-2" />
           <VBtn v-if="appStore.isCurrentUser(user?.id)" icon="mdi-pencil-outline" @click="showEditProfileDialog" />
         </div>
       </VContainer>
