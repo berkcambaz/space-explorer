@@ -60,6 +60,11 @@ function setProfileImage(imageUrl: string) {
   appStore.updateUser(undefined, undefined, imageUrl);
 }
 
+function favourite(imageUrl: string) {
+  const favourited = appStore.isImageFavourited(imageUrl);
+  appStore.favouriteImage(imageUrl, !favourited);
+}
+
 onMounted(async () => {
   const userId = router.currentRoute.value.params.id as string;
 
@@ -105,11 +110,23 @@ onMounted(async () => {
 
   <VSheet class="mx-auto my-4 px-4 bg-transparent" :max-width="display.thresholds.value.md">
     <VRow>
-      <VCol v-for="data in favouritesShown" :key="data.id" cols="4" style="cursor: pointer;">
-        <VImg @click="setProfileImage(data.image_url)" :src="data.image_url" aspect-ratio="1" cover>
-          <template v-slot:placeholder><Progress /></template>
-        </VImg>
+
+      <VCol v-for="data in  favouritesShown " :key="data.id" cols="4">
+        <VHover v-slot="{ isHovering, props }">
+          <VCard :elevation="isHovering ? 12 : 2" v-bind="props">
+            <VImg :src="data.image_url" aspect-ratio="1" cover>
+              <template v-slot:placeholder><Progress /></template>
+
+              <VBtn @click="setProfileImage(data.image_url)" :color="!isHovering ? 'transparent' : ''" variant="text"
+                icon="mdi-image" />
+
+              <VBtn @click="favourite(data.image_url)" :color="!isHovering ? 'transparent' : ''" variant="text"
+                :icon="appStore.isImageFavourited(data.image_url) ? 'mdi-star' : 'mdi-star-outline'" />
+            </VImg>
+          </VCard>
+        </VHover>
       </VCol>
+
     </VRow>
 
     <div class="d-flex align-center my-4">
