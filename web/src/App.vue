@@ -38,7 +38,7 @@ function showLogin() {
 /**
  * Changes to route to the current user's profile if exists.
  */
-function gotoAccount() {
+function gotoProfile() {
   const id = appStore.session?.user.id;
   if (!id) return;
   router.push(`/profile/${id}`);
@@ -85,13 +85,13 @@ onMounted(() => {
 
         <VSheet v-if="display.smAndUp.value" class="d-flex align-center">
           <VBtn 
-            @click="appStore.session ? gotoAccount() : showLogin()" 
+            @click="appStore.session ? gotoProfile() : showLogin()" 
             class="ma-1" 
             color="blue" 
             variant="elevated"
             :prepend-icon="appStore.session ? 'mdi-account' : 'mdi-login'"
           >
-            {{ appStore.session  ? 'Account' : 'Login' }}
+            {{ appStore.session  ? 'Profile' : 'Login' }}
           </VBtn>
 
           <RouterLink to="/picture-of-the-day" class="ma-1">
@@ -134,13 +134,13 @@ onMounted(() => {
 
         <VSheet class="w-100 ma-1">
           <VBtn 
-            @click="appStore.session ? gotoAccount() : showLogin()" 
+            @click="appStore.session ? gotoProfile() : showLogin()" 
             class="w-100"
             color="blue" 
             variant="elevated"
             :prepend-icon="appStore.session ? 'mdi-account' : 'mdi-login'"
           >
-            {{ appStore.session  ? 'Account' : 'Login' }}
+            {{ appStore.session  ? 'Profile' : 'Login' }}
           </VBtn>
         </VSheet>
 
