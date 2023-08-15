@@ -12,7 +12,7 @@ const display = useDisplay();
 
     <VImg src="/android-chrome-512x512.png" class="mx-auto my-8" maxWidth="200" />
 
-    <h1 class="text-h4 text-center" style="text-shadow: 4px 2px 8px #fff;">
+    <h1 class="text-center text-h4 header">
       SPACE EXPLORER
     </h1>
 
@@ -51,3 +51,10 @@ const display = useDisplay();
 
   </VSheet>
 </template>
+
+<style scoped>
+.header {
+  font-weight: 800;
+  text-shadow: 4px 2px 5px gray;
+}
+</style>
