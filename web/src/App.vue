@@ -18,17 +18,15 @@ const appStore = useAppStore();
  */
 const appMenu = ref(false);
 
-const route = router.currentRoute.value.name;
-
 /* Classes to show current route's name highlighted */
-const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": route === "picture-of-the-day" }))
-const youOnEarthClass = computed(() => ({ "text-blue-lighten-1": route === "you-on-earth" }))
-const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": route === "earth-enhanced" }))
+const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "picture-of-the-day" }))
+const youOnEarthClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "you-on-earth" }))
+const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "earth-enhanced" }))
 
 /**
  * Hides or shows the back button depending on the current route (shown in all routes expect for 'home').
  */
-const backButtonStyle = computed((): StyleValue => route === "home" ? { visibility: "hidden" } : {})
+const backButtonStyle = computed((): StyleValue => router.currentRoute.value.name === "home" ? { visibility: "hidden" } : {})
 
 /**
  * Shows/hides the login dialog.
