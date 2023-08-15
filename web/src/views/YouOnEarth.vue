@@ -19,6 +19,9 @@ const error = ref(false);
 const instance = ref<PanZoom | undefined>(undefined);
 const coords = ref<{ lat: number, lon: number } | undefined>(undefined);
 
+/**
+ * Initializes and starts pan zoom, only call once.
+ */
 function startPanZoom() {
   const elem = document.getElementById("panzoom");
   if (!elem) return;
@@ -27,20 +30,32 @@ function startPanZoom() {
   instance.value = panzoom(elem, { bounds: true });
 }
 
+/**
+ * Stops and disposes pan zoom, only call once.
+ */
 function stopPanZoom() {
   instance.value?.dispose();
 }
 
+/**
+ * Called whenever the you on earth image is loaded.
+ */
 function onLoad() {
   startPanZoom();
   loading.value = false;
 }
 
+/**
+ * Called whenever the you on earth image fails to load.
+ */
 function onError() {
   loading.value = false;
   error.value = true;
 }
 
+/**
+ * Start or stop trying to load the you on earth image.
+ */
 function toggle() {
   if (loading.value) {
     loading.value = false;
@@ -52,11 +67,17 @@ function toggle() {
   }
 }
 
+/**
+ * Pause/resume pan zoom depending on the loading status.
+ */
 watch(loading, () => {
   if (loading.value) instance.value?.pause();
   else instance.value?.resume();
 })
 
+/**
+ * Image src of the you on earth image, falls back to default image if error.
+ */
 const imageSrc = computed(() => {
   if (error.value) return examplePNG;
   if (!coords.value) return undefined;
@@ -65,6 +86,9 @@ const imageSrc = computed(() => {
   return api.youOnEarthSrc(lon, lat);
 })
 
+/**
+ * Get longitude and latitude on mounted.
+ */
 onMounted(async () => {
   const location = await util.getLocation();
   if (!location) return;
@@ -73,6 +97,9 @@ onMounted(async () => {
   coords.value = { lon, lat };
 })
 
+/**
+ * Dispose pan zoom on unmounted.
+ */
 onUnmounted(() => {
   stopPanZoom();
 })

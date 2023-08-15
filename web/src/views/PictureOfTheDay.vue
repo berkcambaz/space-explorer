@@ -15,17 +15,38 @@ const appStore = useAppStore();
 
 const apod = ref<IAPOD | undefined>(undefined);
 
+/**
+ * Used to display the dialog for calendar to select date.
+ */
 const dialog = ref(false);
+
+/**
+ * Date selected from the calendar.
+ */
 const date = ref<string>(new Date().toString());
+
+/**
+ * Date selected from the calendar modified into human readable form.
+ */
 const formattedDate = computed(() => util.formatDate(new Date(date.value)));
+
+/**
+ * Whether or not the image in the current date is favourited.
+ */
 const favourited = computed(() => apod.value?.url && appStore.isImageFavourited(apod.value?.url));
 
+/**
+ * Favourites/unfavourites the picture of the day.
+ */
 async function favourite() {
   const imageUrl = apod.value?.url;
   if (!imageUrl) return;
   await appStore.favouriteImage(imageUrl, !favourited.value);
 }
 
+/**
+ * Re-fetches the picture of the day on date change.
+ */
 watchEffect(async () => {
   try {
     const isoDate = util.dateToISO(new Date(date.value));

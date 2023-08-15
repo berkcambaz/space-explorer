@@ -13,30 +13,51 @@ const display = useDisplay();
 const router = useRouter();
 const appStore = useAppStore();
 
+/**
+ * Used to show/hide the navigation drawer (used on devices with small screen size).
+ */
 const appMenu = ref(false);
 
-const backButtonStyle = computed((): StyleValue => router.currentRoute.value.name === "home" ? { visibility: "hidden" } : {})
-const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "picture-of-the-day" }))
-const youOnEarthClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "you-on-earth" }))
-const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": router.currentRoute.value.name === "earth-enhanced" }))
+const route = router.currentRoute.value.name;
 
+/* Classes to show current route's name highlighted */
+const pictureOfTheDayClass = computed(() => ({ "text-blue-lighten-1": route === "picture-of-the-day" }))
+const youOnEarthClass = computed(() => ({ "text-blue-lighten-1": route === "you-on-earth" }))
+const earthEnhancedClass = computed(() => ({ "text-blue-lighten-1": route === "earth-enhanced" }))
+
+/**
+ * Hides or shows the back button depending on the current route (shown in all routes expect for 'home').
+ */
+const backButtonStyle = computed((): StyleValue => route === "home" ? { visibility: "hidden" } : {})
+
+/**
+ * Shows/hides the login dialog.
+ */
 function showLogin() {
   appStore.showLoginDialog = !appStore.showLoginDialog;
 }
 
+/**
+ * Changes to route to the current user's profile if exists.
+ */
 function gotoAccount() {
   const id = appStore.session?.user.id;
   if (!id) return;
   router.push(`/profile/${id}`);
 }
 
+/**
+ * Handle user's auth status.
+ */
 onMounted(() => {
   supabase.auth.getSession().then(async ({ data }) => {
     appStore.session = data.session;
 
+    // If user is logged in, try to create the user (no effects if user is already cretead)
     if (!appStore.session) return;
     appStore.createUser();
 
+    // Fetch user's all favourited images (used to display on profile route)
     const favourites = await appStore.getUserAllFavouriteImages(appStore.session.user.id);
     appStore.favourites.push(...favourites);
   })
@@ -65,13 +86,14 @@ onMounted(() => {
         </VSheet>
 
         <VSheet v-if="display.smAndUp.value" class="d-flex align-center">
-          <VBtn v-if="!appStore.session" @click="showLogin" class="ma-1" color="blue" variant="elevated"
-            prepend-icon="mdi-login">
-            Login
-          </VBtn>
-          <VBtn v-if="appStore.session" @click="gotoAccount" class="ma-1" color="blue" variant="elevated"
-            prepend-icon="mdi-account">
-            Account
+          <VBtn 
+            @click="appStore.session ? gotoAccount() : showLogin()" 
+            class="ma-1" 
+            color="blue" 
+            variant="elevated"
+            :prepend-icon="appStore.session ? 'mdi-account' : 'mdi-login'"
+          >
+            {{ appStore.session  ? 'Account' : 'Login' }}
           </VBtn>
 
           <RouterLink to="/picture-of-the-day" class="ma-1">
@@ -113,18 +135,18 @@ onMounted(() => {
         </RouterLink>
 
         <VSheet class="w-100 ma-1">
-          <VBtn v-if="!appStore.session" @click="showLogin" class="w-100" color="blue" variant="elevated"
-            prepend-icon="mdi-login">
-            Login
-          </VBtn>
-          <VBtn v-if="appStore.session" @click="gotoAccount" class="w-100" color="blue" variant="elevated"
-            prepend-icon="mdi-account">
-            Account
+          <VBtn 
+            @click="appStore.session ? gotoAccount() : showLogin()" 
+            class="w-100"
+            color="blue" 
+            variant="elevated"
+            :prepend-icon="appStore.session ? 'mdi-account' : 'mdi-login'"
+          >
+            {{ appStore.session  ? 'Account' : 'Login' }}
           </VBtn>
         </VSheet>
 
       </VSheet>
-
     </VNavigationDrawer>
 
     <LoginDialog />
@@ -137,6 +159,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* Background animation for stars */
 .background {
   position: fixed;
   top: 50%;

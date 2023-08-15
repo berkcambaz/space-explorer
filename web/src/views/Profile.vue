@@ -19,35 +19,70 @@ const appStore = useAppStore();
 const user = ref<IUser | undefined>(undefined);
 const favourites = ref<IFavourite[]>([]);
 
+/**
+ * Used to display only a portion of favourite images to avoid requesting many images at once.
+ */
 const favouritesShown = ref<IFavourite[]>([]);
+
+/**
+ * Used to display loading overlay.
+ */
 const loading = ref(true);
 
+/**
+ * User's name, auto updated if current user changes their name.
+ */
 const profileName = computed(() => {
   const name = appStore.isCurrentUser(user.value?.id) ? appStore.user?.name : user.value?.name;
   return name || "Space Explorer";
 })
+
+/**
+ * User's bio, auto updated if current user changes their bio.
+ */
 const profileBio = computed(() => {
   const bio = appStore.isCurrentUser(user.value?.id) ? appStore.user?.bio : user.value?.bio;
   return bio || "Bio of the Space Explorer";
 })
+
+/**
+ * User's join date.
+ */
 const profileDate = computed(
   () => user.value ? util.formatDate(new Date(user.value.created_at)) : "Their journey started at..."
 )
+
+/**
+ * User's profile image url, auto updated if current user changes their profile image.
+ */
 const profileImageSrc = computed(() => {
   const profileImage = appStore.isCurrentUser(user.value?.id) ? appStore.user?.profile_image : user.value?.profile_image;
   return profileImage || "/android-chrome-512x512.png";
 })
 
+/**
+ * Tries to logout the user.
+ */
 async function logout() {
-  await supabase.auth.signOut();
-  appStore.$reset();
-  router.push("/home");
+  try {
+    await supabase.auth.signOut();
+    appStore.$reset();
+    router.push("/home");
+  } catch (error) {
+
+  }
 }
 
+/**
+ * Shows/hides the edit profile dialog.
+ */
 function showEditProfileDialog() {
   appStore.showEditProfileDialog = !appStore.showEditProfileDialog;
 }
 
+/**
+ * Try to load 3 more favourited images of the user.
+ */
 function loadMore() {
   const diff = Math.min(favourites.value.length - favouritesShown.value.length, 3);
   if (diff <= 0) return;
@@ -56,29 +91,46 @@ function loadMore() {
   favouritesShown.value.push(...favourites.value.slice(currentLength, currentLength + diff));
 }
 
+/**
+ * Changes user's profile image.
+ * @param imageUrl Url of the image to set as the profile image.
+ */
 function setProfileImage(imageUrl: string) {
   appStore.updateUser(undefined, undefined, imageUrl);
 }
 
+/**
+ * Favourites/unfavourites the image.
+ * @param imageUrl Url of the image to favourite/unfavourite.
+ */
 function favourite(imageUrl: string) {
   const favourited = appStore.isImageFavourited(imageUrl);
   appStore.favouriteImage(imageUrl, !favourited);
 }
 
+/**
+ * Try to fetch user's profile and favourite images.
+ */
 onMounted(async () => {
+  // Retrieve user id from the url (ex. /profile/abc123 -> userId = abc123)
   const userId = router.currentRoute.value.params.id as string;
 
+  // Fetch user profile and favourite images
   const [_user, _favourites] = await Promise.all([
     appStore.getUser(userId),
     appStore.getUserAllFavouriteImages(userId),
   ]);
 
+  // Set user and favourites (sort by date descending)
   user.value = _user;
   favourites.value = _favourites.sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 
+  // Show only first 3 favourite images
   favouritesShown.value = _favourites.slice(0, 3);
+
+  // Set overlay's loading to false
   loading.value = false;
 })
 </script>
@@ -110,23 +162,29 @@ onMounted(async () => {
 
   <VSheet class="mx-auto my-4 px-4 bg-transparent" :max-width="display.thresholds.value.md">
     <VRow>
-
       <VCol v-for="data in  favouritesShown " :key="data.id" cols="4">
         <VHover v-slot="{ isHovering, props }">
           <VCard :elevation="isHovering ? 12 : 2" v-bind="props">
             <VImg :src="data.image_url" aspect-ratio="1" cover>
               <template v-slot:placeholder><Progress /></template>
 
-              <VBtn @click="setProfileImage(data.image_url)" :color="!isHovering ? 'transparent' : ''" variant="text"
-                icon="mdi-image" />
+              <VBtn 
+                @click="setProfileImage(data.image_url)" 
+                :color="!isHovering ? 'transparent' : ''" 
+                variant="text"
+                icon="mdi-image" 
+              />
 
-              <VBtn @click="favourite(data.image_url)" :color="!isHovering ? 'transparent' : ''" variant="text"
-                :icon="appStore.isImageFavourited(data.image_url) ? 'mdi-star' : 'mdi-star-outline'" />
+              <VBtn 
+                @click="favourite(data.image_url)" 
+                :color="!isHovering ? 'transparent' : ''" 
+                variant="text"
+                :icon="appStore.isImageFavourited(data.image_url) ? 'mdi-star' : 'mdi-star-outline'" 
+              />
             </VImg>
           </VCard>
         </VHover>
       </VCol>
-
     </VRow>
 
     <div class="d-flex align-center my-4">

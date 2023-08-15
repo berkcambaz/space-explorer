@@ -16,12 +16,20 @@ const dateRange = ref<string[]>([]);
 const epic = ref<IEPIC[]>([]);
 const epicShown = ref<IEPIC[]>([]);
 
+/**
+ * Returns image src of the earth enhanced image.
+ * @param _epic Data from NASA EPIC API.
+ */
 function epicSrc(_epic: IEPIC) {
   const date = _epic.date.slice(0, 10).replaceAll('-', '/');
   const image = _epic.image;
   return api.earthEnhancedSrc(date, image);
 }
 
+/**
+ * Try to load more earth enhanced images, if none left and
+ * a date range is selected, try to fetch the next date's images.
+ */
 async function loadMore() {
   const diff = Math.min(epic.value.length - epicShown.value.length, 3);
 
@@ -45,6 +53,9 @@ async function loadMore() {
   epicShown.value.push(...epic.value.slice(currentLength, currentLength + diff));
 }
 
+/**
+ * Re-fetch earth enhanced photos on date range change.
+ */
 watch(dateRange, async () => {
   const date = dateRange.value[0] ? new Date(dateRange.value[0]) : new Date();
   const dateText = util.dateToISO(date);
@@ -55,6 +66,9 @@ watch(dateRange, async () => {
   epicShown.value = result.slice(1, 3 + 1);
 })
 
+/**
+ * Fetch earth enhanced photos on mount.
+ */
 onMounted(async () => {
   try {
     const result = await api.earthEnhanced();
